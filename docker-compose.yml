@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  # MongoDB
+  mongodb:
+    image: mongo:7.0
+    container_name: chembot-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: chembot
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - chembot-network
+    restart: unless-stopped
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: chembot-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - chembot-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # Backend API
+  # The docker-entrypoint.sh script will:
+  # 1. Wait for MongoDB and Redis to be ready
+  # 2. Run database initialization (create indexes and sample users)
+  # 3. Start the FastAPI application
+  backend:
+    build: .
+    container_name: chembot-backend
+    ports:
+      - "8000:8000"
+    environment:
+      # Override these for Docker networking
+      - MONGODB_URL=mongodb://mongodb:27017
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      # All other environment variables will be loaded from .env file
+    env_file:
+      - .env  # This loads all API keys and configuration from your .env file
+    volumes:
+      - ./uploads:/app/uploads
+      - ./src:/app/src
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - chembot-network
+    restart: unless-stopped
+
+  # Frontend (optional - can be deployed separately)
+  # frontend:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.frontend
+  #   container_name: chembot-frontend
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - VITE_API_BASE_URL=http://localhost:8000/api
+  #   networks:
+  #     - chembot-network
+  #   restart: unless-stopped
+
+volumes:
+  mongodb_data:
+  redis_data:
+
+networks:
+  chembot-network:
+    driver: bridge

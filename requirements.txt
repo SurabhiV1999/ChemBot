@@ -1,0 +1,54 @@
+# FastAPI Framework
+fastapi==0.109.2
+uvicorn[standard]==0.27.1
+gunicorn==21.2.0
+python-multipart==0.0.9
+
+# MongoDB
+pymongo==4.6.1
+motor==3.3.2
+
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+python-dotenv==1.0.1
+pyjwt==2.8.0
+
+# Caching
+redis==5.0.1
+hiredis==2.3.2
+
+# Data Validation
+pydantic==2.6.1
+pydantic-settings==2.1.0
+email-validator==2.1.0.post1
+
+# File Processing & Document Conversion
+PyMuPDF4LLM==0.0.5
+pymupdf>=1.24.2
+python-docx==1.1.0
+pdf2docx==0.5.8
+markdown==3.5.2
+
+# LLM Integration (Multi-LLM Support)
+litellm==1.24.3
+
+# Vector Databases
+pinecone-client==3.0.3
+weaviate-client==4.4.1
+
+# Embeddings & Text Processing
+sentence-transformers==2.3.1
+tiktoken==0.6.0
+
+# Utilities
+aiofiles==23.2.1
+tqdm==4.66.1
+PyYAML==6.0.1
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-mock==3.12.0
+
