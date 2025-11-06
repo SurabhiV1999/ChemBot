@@ -111,7 +111,6 @@ ChatbotEngine.ask_question() / ask_question_stream()
 - **Version:** 0.109+
 - **Purpose:** Async REST API server
 - **Key Features:**
-  - Automatic OpenAPI documentation (Swagger UI, ReDoc)
   - Type hints validation via Pydantic
   - Async/await support throughout
   - Dependency injection for auth, database
